@@ -1,0 +1,22 @@
+<p>
+  activity-list works!
+</p>
+
+<div *ngfor="let Activity of activities$ | async">
+  <div>{{Activity.title}}</div>
+</div>
+
+
+<h1> Add Activity </h1>
+<form #frmActivity="ngform" id="frmActivity" (ngSubmit)="createActivity()" >
+  <div class="row">
+  <label>Title</label>
+  <input id="title" type="text" [(ngModel)]="activity.title">
+  </div>
+<div class="row">
+  <label> Description </label>
+  <input id="description" type="text" [(ngModel)="activity.description"]>
+</div>
+  <button type="submit">Save</button>
+</form>
+
