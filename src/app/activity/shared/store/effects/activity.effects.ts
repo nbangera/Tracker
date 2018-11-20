@@ -5,7 +5,8 @@ import {
   LoadActivitiesSuccess,
   LoadActivitiesFail,
   AddActivitySuccess,
-  AddActivityFail
+  AddActivityFail,
+  AddActivity
 } from "./../actions/activity.actions";
 import { Injectable } from "@angular/core";
 import { Actions, Effect, ofType } from "@ngrx/effects";
@@ -51,30 +52,28 @@ export class ActivityEffects {
   @Effect()
   addActivity$ = this.actions$.pipe(
     ofType(ActivityActionTypes.Add_Activity),
-    pluck("payload", "activity"),
-    mergeMap(
-      (activityObj) => this.afs.collection("activities").add(activityObj)
-      ,
-      map((activityId:string)=>{
-
-            const createdActivity = this.afs
-          .collection<Activity>("activities")
-          .doc(activityId);
-        new AddActivitySuccess({ activity: createdActivity });
-      }
-
-        //const createActivity:Activity =new Activity{};
-        //new AddActivitySuccess({activity:createActivity}))
-
-      // map(
-      // //   (acitivityId: string) => {
-      // //   //id2: string = acitivityId;
-      // //   const createdActivity = this.afs
-      // //     .collection("activities")
-      // //     .doc(acitivityId);
-      // //   new AddActivitySuccess({ activity: createdActivity });
-      // // },
-      //  catchError(error => of(new AddActivityFail({ error: error }))))
-    )
+    //pluck("payload", "activity"),
+    map((action: AddActivity) => action.payload.activity),
+    mergeMap(activityObj => {
+      const id = this.afs.collection<Activity>("activities").add(activityObj);
+      return of({ id: id, activity: activityObj });
+    }),
+    map((next: { id: string; activity: Activity }) => {
+      return this.afs
+        .doc<Activity>(`activities/${next.id}`)
+        .snapshotChanges()
+        .pipe(
+          map(changes => {
+            const data = changes.payload.data() as Activity;
+            data.id = changes.payload.id;
+            return data;
+          })
+        );
+    }),
+    switchMap(activity => {
+      activity.subscribe(r => {
+        return new AddActivitySuccess({ activity: r });
+      });
+    })
   );
 }
