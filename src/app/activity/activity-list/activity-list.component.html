@@ -1,22 +1,40 @@
-<p>
+ <p>
   activity-list works!
 </p>
 
-<div *ngfor="let Activity of activities$ | async">
-  <div>{{Activity.title}}</div>
+<div *ngFor="let Activity of activities$ | async">
+  <div>{{Activity.title}}</div> <button (click)="viewDetail(Activity.id)" >View</button>
+  <button (click)="editDetail(Activity.id)" >Edit</button>
 </div>
 
 
 <h1> Add Activity </h1>
-<form #frmActivity="ngform" id="frmActivity" (ngSubmit)="createActivity()" >
+<form #frmActivity="ngForm" (ngSubmit)="createActivity()">
   <div class="row">
   <label>Title</label>
-  <input id="title" type="text" [(ngModel)]="activity.title">
+  <input id="title" name="title" type="text" [(ngModel)]="activity.title">
   </div>
 <div class="row">
   <label> Description </label>
-  <input id="description" type="text" [(ngModel)="activity.description"]>
+  <input id="description" name="description" type="text" [(ngModel)]="activity.description">
 </div>
   <button type="submit">Save</button>
 </form>
+
+<form>
+  <h1>Detail</h1>
+  <div *ngIf="selectedActivity$ | async; let activity">
+    <div>{{activity.description}}</div>
+  </div>
+</form>
+
+<form #frmActivityEdit="ngForm" (ngSubmit)="updateActivity(frmActivityEdit)">
+  <h1>Edit</h1>
+  <div *ngIf="selectedActivity$ | async; let activity">
+    <input type="hidden" name="id" [(ngModel)]="activity.id">
+    <input type="text" name="description" [(ngModel)]="activity.description">
+  </div>
+  <button type="submit">Save</button>
+</form>
+
 

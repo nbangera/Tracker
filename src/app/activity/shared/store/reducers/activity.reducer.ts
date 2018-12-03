@@ -1,3 +1,4 @@
+import { UpdateActivityFail } from './../actions/activity.actions';
 
 import { Activity } from "./../../model/activity";
 import { Action } from "@ngrx/store";
@@ -50,6 +51,22 @@ export function reducer(state = initialState, action: ActivityActions): State {
         error: action.payload.error
       };
     }
+    case ActivityActionTypes.Fetch_Activity:{
+      return{
+        ...state,
+        loading : true,
+        loaded :false,
+        selectedActivityId:action.payload.activityId
+      }
+    }
+    // case ActivityActionTypes.Fetch_Activity_Success:{
+    //   return{
+    //     ...state,
+    //     loaded:true,
+    //     loa
+    //   }
+    // }
+
     case ActivityActionTypes.Add_Activity: {
       //just updating loading and loaded state
       return { ...state, loading: false, loaded: true };
@@ -68,6 +85,32 @@ export function reducer(state = initialState, action: ActivityActions): State {
         loading: false,
         error: action.payload.error
       };
+    }
+
+    case ActivityActionTypes.Update_Activity_Success:{
+
+      return activityAdapter.updateOne(action.payload.activity,{
+        ...state,
+        loaded:true,
+        loading:false
+      })
+    }
+
+    case ActivityActionTypes.Update_Activity:{
+      return {
+        ...state,
+        loading:true,
+        loaded:false
+      }
+    }
+
+    case ActivityActionTypes.Update_Activity_Fail:{
+      return {
+        ...state,
+        loaded:true,
+        loading:false,
+        error:action.payload.error
+      }
     }
 
     default:

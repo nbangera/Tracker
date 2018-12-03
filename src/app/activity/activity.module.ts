@@ -8,12 +8,14 @@ import { StoreModule } from '@ngrx/store';
 import * as fromActivity from './shared/store/reducers/activity.reducer';
 import { EffectsModule } from '@ngrx/effects';
 import { ActivityEffects } from './shared/store/effects/activity.effects';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [ActivityListComponent, ActivityCreateComponent, ActivityUpdateComponent, ActivityDetailComponent],
   imports: [
+    FormsModule,
     CommonModule,
-    StoreModule.forFeature('activity', fromActivity.reducer),
+    StoreModule.forFeature('activities', fromActivity.reducer),
     EffectsModule.forFeature([ActivityEffects])
   ]
 })
